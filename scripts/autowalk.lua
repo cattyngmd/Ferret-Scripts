@@ -8,7 +8,7 @@ function main()
 	autowalk:body(function(mod)
 
 		autowalk:registerCallback("tick", function(tick)
-    		mc.options.keyForward:setPressed(true)
+    			mc.options.keyForward:setPressed(true)
 		end)	
 
 		autowalk:onDisable(function()
