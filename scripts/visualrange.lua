@@ -15,6 +15,10 @@ function main()
 
 			if(event:getName() == "tick") then	
 
+				if(mc.world == nil) then
+					known = {}
+				end
+
 				local iterator = mc.world:getEntities():iterator()
 				while iterator:hasNext() do
   					local entity = iterator:next()
@@ -23,14 +27,14 @@ function main()
   						local ind1 = string.find(tostring(entity), "'/")
   						local username = string.sub(tostring(entity), ind + 1, ind1 - 1)
   						if(check(username) == false) then
-  							mc.inGameHud:getChatHud():addMessage(Text:of("งa+งf " .. username .. " งa> ง7VisualRange"))
+  							mc.inGameHud:getChatHud():addMessage(Text:of("ยงa+ยงf " .. username .. " ยงa> ยง7VisualRange"))
   						end
   					end
 				end
 
 				for i = 1, #known - 1 do
-					if(not string.find(tostring(mc.world:getEntities()), known[i])) then
-						mc.inGameHud:getChatHud():addMessage(Text:of("ง6-งf " .. known[i] .. " ง6> ง7VisualRange"))
+					if(known[i] ~= nil and not string.find(tostring(mc.world:getEntities()), known[i])) then
+						mc.inGameHud:getChatHud():addMessage(Text:of("ยง6-ยงf " .. known[i] .. " ยง6> ยง7VisualRange"))
 						table.remove(known, i)
 					end
 				end
@@ -41,7 +45,7 @@ function main()
 
 		function check(username)
 			for i = 1, 1000 do
-				if(known[i] == username) then
+				if(known[i] ~= nil and known[i] == username) then
 					return true
 				else
 					if(i > #known) then
