@@ -32,7 +32,7 @@ function main()
   					end
 				end
 
-				for i = 1, #known - 1 do
+				for i = 1, #known do
 					if(known[i] ~= nil and not string.find(tostring(mc.world:getEntities()), known[i])) then
 						mc.inGameHud:getChatHud():addMessage(Text:of("§6-§f " .. known[i] .. " §6> §7VisualRange"))
 						table.remove(known, i)
