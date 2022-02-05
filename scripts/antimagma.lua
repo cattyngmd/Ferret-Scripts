@@ -17,7 +17,8 @@ function main()
 				if(getBlock(mc.player:getX(), mc.player:getY() - 0.5, mc.player:getZ()) == "Block{minecraft:magma_block}") then
 					mc.player.networkHandler:sendPacket(luajava.newInstance("net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket", mc.player, adolf:valueOf("PRESS_SHIFT_KEY")))
 					if (mc.player.age % 80 == 0) then
-						mc.player.networkHandler:sendPacket(luajava.newInstance("net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket", mc.player, adolf:valueOf("RELEASE_SHIFT_KEY")))
+						mc.options.keySneak:setPressed(true)
+						mc.options.keySneak:setPressed(false)
 					end
 					bool = true
 				else
