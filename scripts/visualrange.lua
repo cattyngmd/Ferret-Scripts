@@ -15,8 +15,6 @@ function main()
 
 			if(event:getName() == "tick") then	
 
-				if(mc.world == nil) then known = {} end
-
 				local entities = globals:getEntities()
 
 				for i = 0, entities:size() - 1 do
