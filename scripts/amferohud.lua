@@ -1,5 +1,5 @@
 --hud
---author: амферо (катун анимацию јп√ре…дЌуЋ)
+--author: amfero & cattyn
 
 function main()
 
@@ -10,28 +10,30 @@ function main()
 
     local iW = 1
     local resetW = false
+    local msgs = {}
 
     ahud:body(function(mod)
 
         local watermark = BooleanBuilder(true):name("Watermark"):build(ahud)
         local coords = BooleanBuilder(true):name("CoordHud"):build(ahud)
+        local dms = BooleanBuilder(true):name("DirectMsgs"):build(ahud)
         local other = BooleanBuilder(true):name("Other"):build(ahud)
-
+        
         local width = NumberBuilder(75):name("Width"):setBounds(1, 200):build(ahud)
         local speed = NumberBuilder(2):name("Speed"):setBounds(1, 10):build(ahud)
         local r = NumberBuilder(100):name("Red"):setBounds(0, 255):build(ahud)
         local g = NumberBuilder(255):name("Green"):setBounds(0, 255):build(ahud)
         local b = NumberBuilder(150):name("Blue"):setBounds(0, 255):build(ahud)
-
+    
         ahud:registerCallback("events", function(event)
-
+        
             if(event:getName() == "render_2d") then
 
                 local w = mc:getWindow():getScaledWidth()
                 local h = mc:getWindow():getScaledHeight() - 10
 
                 if(watermark:getValue()) then
-
+                    
                     local watermarkText = "amferohack // " .. getTime("HH:mm:ss") .. " // " .. globals:getUsername()
 
                     if resetW then
@@ -65,25 +67,25 @@ function main()
                     if(mc.world:getRegistryKey():getValue():getPath() == "the_nether") then
 
                         str = string.format("XYZ: %.1f, %.1f, %.1f (%.1f, %.1f)", x, y, z, x * 8, z * 8)
-
+    
                         renderer:rectFilled(event:getStack(), vec2d(1,  h - 3), vec2d(5 +  renderer:width(str), h - 2), color(255, 255, 255, 255))
                         renderer:rectFilled(event:getStack(), vec2d(1,  h - 2), vec2d(5 +  renderer:width(str), h + 10), color(1, 1, 1, 150))
                         renderer:rectFilled(event:getStack(), vec2d(1,  h + 9), vec2d(5 +  renderer:width(str), h + 10), color(255, 255, 255, 255))
                         renderer:rectFilled(event:getStack(), vec2d(5 +  renderer:width(str),  h - 2), vec2d(6 +  renderer:width(str), h + 9), color(255, 255, 255, 255))
                         renderer:rectFilled(event:getStack(), vec2d(0,  h - 2), vec2d(1, h + 9), color(255, 255, 255, 255))
                         renderer:textWithShadow(event:getStack(), str, vec2d(3, h), color(255, 255, 255, 255))
-
+    
                     else
-
+    
                         str = string.format("XYZ: %.1f, %.1f, %.1f (%.1f, %.1f)", x, y, z, x / 8, z / 8)
-
+    
                         renderer:rectFilled(event:getStack(), vec2d(1,  h - 3), vec2d(5 +  renderer:width(str), h - 2), color(255, 255, 255, 255))
                         renderer:rectFilled(event:getStack(), vec2d(1,  h - 2), vec2d(5 +  renderer:width(str), h + 10), color(1, 1, 1, 150))
                         renderer:rectFilled(event:getStack(), vec2d(1,  h + 9), vec2d(5 +  renderer:width(str), h + 10), color(255, 255, 255, 255))
                         renderer:rectFilled(event:getStack(), vec2d(5 +  renderer:width(str),  h - 2), vec2d(6 +  renderer:width(str), h + 9), color(255, 255, 255, 255))
                         renderer:rectFilled(event:getStack(), vec2d(0,  h - 2), vec2d(1, h + 9), color(255, 255, 255, 255))
                         renderer:textWithShadow(event:getStack(), str, vec2d(3, h), color(255, 255, 255, 255))
-
+    
                     end
 
                 end
@@ -96,6 +98,43 @@ function main()
 
                 end
 
+                if(dms:getValue()) then
+
+                    for i = 1, #msgs do
+
+                        if(msgs[i] ~= nil) then
+    
+                            renderer:rectFilled(event:getStack(), vec2d(4, 100 + i * 12 - 1), vec2d(6 + renderer:width(msgs[i]), 100 + i * 12 + 11), color(1, 1, 1, 150))
+                            renderer:textWithShadow(event:getStack(), msgs[i], vec2d(5, 100 + i * 13), color(211, 67, 202, 255))
+    
+                        end
+                        
+                        if(i > 7) then
+
+                            msgs = {}
+
+                        end
+    
+                    end
+
+                end
+
+            end
+
+            if(event:getName() == "packet_receive") then
+
+                if(dms:getValue() and event:is("GameMessageS2CPacket")) then
+
+                    local msg = event:getPacket():getMessage()
+
+                    if(string.find(msg:getString(), "whispers:") and string.find(tostring(msg), "light_purple")) then
+
+                        table.insert(msgs, msg:getString())
+
+                    end
+
+                end
+
             end
 
         end)
@@ -103,7 +142,9 @@ function main()
     end)
 
     function getTime(format)
+
         return LocalDateTime:now():format(DateFormatter:ofPattern(format))
+
     end
 
 end
