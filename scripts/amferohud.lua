@@ -10,7 +10,6 @@ function main()
 
     local iW = 1
     local resetW = false
-    local msgs = {}
 
     ahud:body(function(mod)
 
@@ -25,6 +24,8 @@ function main()
         local g = NumberBuilder(255):name("Green"):setBounds(0, 255):build(ahud)
         local b = NumberBuilder(150):name("Blue"):setBounds(0, 255):build(ahud)
     
+        local msgs = {}
+
         ahud:registerCallback("events", function(event)
         
             if(event:getName() == "render_2d") then
@@ -123,15 +124,21 @@ function main()
 
             if(event:getName() == "packet_receive") then
 
-                if(dms:getValue() and event:is("GameMessageS2CPacket")) then
+                if(dms:getValue()) then
 
-                    local msg = event:getPacket():getMessage()
+                    if(event:is("GameMessageS2CPacket")) then
 
-                    if(string.find(msg:getString(), "whispers:") and string.find(tostring(msg), "light_purple")) then
-
-                        table.insert(msgs, msg:getString())
-
+                        local msg = event:getPacket():getMessage()
+    
+                        if(string.find(msg:getString(), "whispers:") and string.find(tostring(msg), "light_purple")) then
+    
+                            table.insert(msgs, msg:getString())
+    
+                        end
+    
                     end
+    
+                    if(event:is("GameJoinS2CPacket")) then msgs = {} end
 
                 end
 
