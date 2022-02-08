@@ -1,3 +1,6 @@
+-- Highjump
+-- author: cattyn
+
 function main() 
 
 end
