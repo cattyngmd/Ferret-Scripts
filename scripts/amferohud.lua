@@ -44,7 +44,7 @@ function main()
 
                     end
 
-                    if(iW - width:getValue() > renderer:width(watermarkText) + 3) then resetW = true end
+                    if(iW - width:getValue() >= renderer:width(watermarkText) + 3) then resetW = true end
 
                     iW = iW + speed:getValue()
 
