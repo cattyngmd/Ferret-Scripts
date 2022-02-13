@@ -6,7 +6,7 @@ function main( )
     local ConnectionMessages = Module.new( "ConnectionMessages",
         "Displays connection messages in chat", "MISC", this );
 
-    local method_getPlayerListEntry = remapper:remapMethod( nil, "getPlayerListEntry", "NAMED" );
+    local method_getPlayerListEntry = remapper:remapMethod( nil, "getPlayerListEntry", "NAMED", "java/util/UUID" );
     method_getPlayerListEntry = method_getPlayerListEntry.intermediary;
 
     local Text = luajava.bindClass( "net.minecraft.text.Text" );
