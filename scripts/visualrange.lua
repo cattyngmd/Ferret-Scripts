@@ -23,7 +23,7 @@ function main()
 
 					if(#username < 32 and username ~= globals:getUsername()) then
 						
-						if(not check(username)) then mc.inGameHud:getChatHud():addMessage(Text:of("§a+§f " .. username .. " §a> §7VisualRange")) end
+						if(not check(username)) then mc.inGameHud:getChatHud():addMessage(Text:of("§8[Ferret]: §6" .. username .. " entered visual range")) end
 
 					end
 
@@ -33,7 +33,7 @@ function main()
 
 					if(known[i] ~= nil and not string.find(tostring(entities), known[i])) then
 
-						mc.inGameHud:getChatHud():addMessage(Text:of("§6-§f " .. known[i] .. " §6> §7VisualRange"))
+						mc.inGameHud:getChatHud():addMessage(Text:of("§8[Ferret]: §6" .. known[i] .. " left visual range"))
 						table.remove(known, i)
 
 					end
