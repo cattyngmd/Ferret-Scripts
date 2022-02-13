@@ -1,4 +1,4 @@
--- ConnectionLogger
+-- ConnectionMessages
 -- by mrnv
 
 function main( )
