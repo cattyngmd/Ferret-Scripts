@@ -3,7 +3,7 @@
 
 function main()
 
-    local ahud = Module.new("Hud", "description", "VISUAL", this)
+    local ahud = Module.new("Hud", "description", "CLIENT", this)
 
     local DateFormatter = luajava.bindClass("java.time.format.DateTimeFormatter")
     local LocalDateTime = luajava.bindClass("java.time.LocalDateTime")
