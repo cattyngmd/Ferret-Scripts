@@ -49,7 +49,7 @@ function main( )
                         end
                     elseif( action == "REMOVE_PLAYER" ) then
                         local data = packet:getEntries( ):get( 0 );
-                        if( not data:getProfile( ):getId( ):equals( mc.player:getGameProfile( ):getName( ) ) ) then
+                        if( not data:getProfile( ):getId( ):equals( mc.player:getGameProfile( ):getId( ) ) ) then
                             local entry = GetPlayerListEntry( data:getProfile( ):getId( ) );
                             if( entry ~= nil and entry:getProfile( ) ~= nil ) then
                                 local name = entry:getProfile( ):getName( );
@@ -72,6 +72,8 @@ function main( )
         end );
 
         function GetPlayerListEntry( uuid )
+            -- this is the same as mc:getNetworkHandler( ):method( uuid );
+            -- but in this case you can specify method name as a string
             return mc:getNetworkHandler( )[ method_getPlayerListEntry ]( mc:getNetworkHandler( ), uuid );
         end
 
