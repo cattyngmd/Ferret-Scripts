@@ -201,8 +201,6 @@ function main()
                                     text = tostring(option:getValue())
                                 end
                             end
-                        else
-                            options = {}
                         end
                     end
                 end
