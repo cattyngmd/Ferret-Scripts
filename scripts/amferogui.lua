@@ -176,6 +176,8 @@ function main()
 
             if(handleType(button, false) == "lcm") then
 
+                typing = false
+                        
                 for i = 1, #mxy do
                     if(i % 3 == 0 and options[1] == nil) then
                         if(pointY > mxy[i] - 1 and pointY < mxy[i] + 12 and pointX > mxy[i - 1] - 2 and pointX < mxy[i - 1] + 104) then
