@@ -229,8 +229,20 @@ function main()
 
         end)
 
+        gui:setMouseScrolled(function (point, amount)
+
+            if(amount == 1) then
+                y = y - 10
+            else
+                y = y + 10
+            end
+
+        end)
+
         gui:setKeyPressed(function(key, scan, modifiers)
+
             handleType(key, true)
+
         end)
 
         gui:setCharTyped(function (char, modi)
@@ -242,8 +254,6 @@ function main()
         end)
 
         function handleType(key, iskeyboard)
-
-            print(key)
 
             if key == 263 and iskeyboard then
                 x = x - 10
