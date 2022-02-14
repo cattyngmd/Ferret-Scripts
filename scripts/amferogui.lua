@@ -177,7 +177,7 @@ function main()
             if(handleType(button, false) == "lcm") then
 
                 typing = false
-                        
+
                 for i = 1, #mxy do
                     if(i % 3 == 0 and options[1] == nil) then
                         if(pointY > mxy[i] - 1 and pointY < mxy[i] + 12 and pointX > mxy[i - 1] - 2 and pointX < mxy[i - 1] + 104) then
@@ -189,7 +189,6 @@ function main()
                 for i = 1, #oxy do
                     if(i % 3 == 0) then
                         if(pointY > oxy[i] - 1 and pointY < oxy[i] + 12 and pointX > oxy[i - 1] - 2 and pointX < oxy[i - 1] + renderer:width(oxy[i - 2]:getName()) + 34) then
-                            if(typing == true) then typing = false end
                             local option = oxy[i - 2]
                             if(option:is("bool")) then
                                 option:setValue(not option:getValue())
@@ -231,21 +230,7 @@ function main()
         end)
 
         gui:setKeyPressed(function(key, scan, modifiers)
-
-            if(handleType(key, true) == "backspace") then
-                text = text:sub(1, -2)
-            end
-
-            if(handleType(key, true) == "enter" and typing) then
-                typingOption:setStringValue(text)
-                typing = not typing
-            end
-
-            if(handleType(key, true) == "esc" and typing) then
-                typing = not typing
-                options = {}
-            end
-
+            handleType(key, true)
         end)
 
         gui:setCharTyped(function (char, modi)
@@ -258,16 +243,36 @@ function main()
 
         function handleType(key, iskeyboard)
 
-            if key == 256 and iskeyboard then
-                return "esc"
+            print(key)
+
+            if key == 263 and iskeyboard then
+                x = x - 10
+            end
+
+            if key == 262 and iskeyboard then
+                x = x + 10
+            end
+
+            if key == 264 and iskeyboard then
+                y = y + 10
+            end
+
+            if key == 265 and iskeyboard then
+                y = y - 10
+            end
+
+            if key == 254 and iskeyboard then
+                typing = not typing
+                options = {}
             end
 
             if key == 257 and iskeyboard then
-                return "enter"
+                typingOption:setStringValue(text)
+                typing = not typing
             end
 
             if key == 259 and iskeyboard then
-                return "backspace"
+                text = text:sub(1, -2)
             end
 
             if key == 0 and not iskeyboard then
