@@ -314,9 +314,10 @@ function main()
         function handleType(key, iskeyboard)
 
             if key == 256 and iskeyboard then
-                module:setToggled(false)
                 binding = false
                 typing = false
+                options = {}
+                module:setToggled(false)
             end
 
             if key == 263 and iskeyboard then
