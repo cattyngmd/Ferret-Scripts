@@ -29,6 +29,7 @@ function main()
         local binding = false
         local bindingModule
         local text = ""
+        local unnamed
 
         gui:setRender(function(matrix, point)
 
@@ -150,33 +151,51 @@ function main()
             for i = 1, #options do
 
                 local modules = client:getModuleManager()
-                local index = find(options[i]:getFeature():getName())
-
                 local bindString
 
-                if(typing and options[i] == typingOption) then
-                    string = options[i]:getName() .. ": " .. text .. "..."
+                if(options[1] == "") then
+                    local index = find(unnamed)
+                    
+                    if(binding) then
+                        bindString = "Key: " .. modules:get(mxy[index]):getKey() .. "..."
+                    else
+                        bindString = "Key: " .. modules:get(mxy[index]):getKey() 
+                    end 
+                    
+                    renderer:rectFilled(matrix, vec2d(mxy[index + 1] + 45 - 2, mxy[index + 2] + i * 12 - 8), vec2d(mxy[index + 1] + renderer:width(bindString) + 48, mxy[index + 2] + i * 12 + 4), color(10, 10, 10, 255))
+                    renderer:textWithShadow(matrix, bindString, vec2d(mxy[index + 1] + 45, mxy[index + 2] + i * 12 - 6), color(255, 255, 255, 255))
+
+                    table.insert(oxy, "")
+                    table.insert(oxy, modules:get(mxy[index]))
+                    table.insert(oxy, mxy[index + 1] + 45)
+                    table.insert(oxy, mxy[index + 2] + i * 12 - 6)
                 else
-                    string = options[i]:getName() .. ": " .. tostring(options[i]:getValue())
+                    local index = find(options[i]:getFeature():getName())
+
+                    if(typing and options[i] == typingOption) then
+                        string = options[i]:getName() .. ": " .. text .. "..."
+                    else
+                        string = options[i]:getName() .. ": " .. tostring(options[i]:getValue())
+                    end
+
+                    if(binding) then
+                        bindString = "Key: " .. modules:get(mxy[index]):getKey() .. "..."
+                    else
+                        bindString = "Key: " .. modules:get(mxy[index]):getKey() 
+                    end 
+
+                    renderer:rectFilled(matrix, vec2d(mxy[index + 1] + 45 - 2, mxy[index + 2] + i * 12 - 8), vec2d(mxy[index + 1] + renderer:width(string) + 48, mxy[index + 2] + i * 12 + 4), color(10, 10, 10, 255))
+                    renderer:textWithShadow(matrix, string, vec2d(mxy[index + 1] + 45, mxy[index + 2] + i * 12 - 6), color(255, 255, 255, 255))
+                    
+                    if(options[i + 1] == nil) then
+                        renderer:rectFilled(matrix, vec2d(mxy[index + 1] + 45 - 2, mxy[index + 2] + i * 12 + 4), vec2d(mxy[index + 1] + renderer:width(bindString) + 48, mxy[index + 2] + i * 12 + 4 + 12), color(10, 10, 10, 255))
+                        renderer:textWithShadow(matrix, bindString, vec2d(mxy[index + 1] + 45, mxy[index + 2] + (i + 1) * 12 - 6), color(255, 255, 255, 255))
+                    end
+
+                    table.insert(oxy, options[i])
+                    table.insert(oxy, mxy[index + 1] + 45)
+                    table.insert(oxy, mxy[index + 2] + i * 12 - 6)
                 end
-
-                if(binding) then
-                    bindString = "Key: " .. modules:get(mxy[index]):getKey() .. "..."
-                else
-                    bindString = "Key: " .. modules:get(mxy[index]):getKey() 
-                end 
-
-                renderer:rectFilled(matrix, vec2d(mxy[index + 1] + 45 - 2, mxy[index + 2] + i * 12 - 8), vec2d(mxy[index + 1] + renderer:width(string) + 48, mxy[index + 2] + i * 12 + 4), color(10, 10, 10, 255))
-                renderer:textWithShadow(matrix, string, vec2d(mxy[index + 1] + 45, mxy[index + 2] + i * 12 - 6), color(255, 255, 255, 255))
-                
-                if(options[i + 1] == nil) then
-                    renderer:rectFilled(matrix, vec2d(mxy[index + 1] + 45 - 2, mxy[index + 2] + i * 12 + 4), vec2d(mxy[index + 1] + renderer:width(bindString) + 48, mxy[index + 2] + i * 12 + 4 + 12), color(10, 10, 10, 255))
-                    renderer:textWithShadow(matrix, bindString, vec2d(mxy[index + 1] + 45, mxy[index + 2] + (i + 1) * 12 - 6), color(255, 255, 255, 255))
-                end
-
-                table.insert(oxy, options[i])
-                table.insert(oxy, mxy[index + 1] + 45)
-                table.insert(oxy, mxy[index + 2] + i * 12 - 6)
 
             end
 
@@ -204,6 +223,14 @@ function main()
                 end
 
                 for i = 1, #oxy do
+                    if(oxy[1] == "") then
+                        if(pointY > oxy[4] - 1 and pointY < oxy[4] + 12 and pointX > oxy[3] - 2 and pointX < oxy[3] + 44) then
+                            binding = true
+                            bindingModule = oxy[2]
+                        end
+                        return
+                    end
+
                     if(i % 3 == 0) then
                         if(pointY > oxy[i] - 1 and pointY < oxy[i] + 12 and pointX > oxy[i - 1] - 2 and pointX < oxy[i - 1] + renderer:width(oxy[i - 2]:getName()) + 34) then
                             local option = oxy[i - 2]
@@ -241,10 +268,16 @@ function main()
                 for i = 1, #mxy do
                     if(i % 3 == 0) then
                         if(pointY > mxy[i] - 1 and pointY < mxy[i] + 11 and pointX > mxy[i - 1] - 2 and pointX < mxy[i - 1] + 104) then
+                            local p = 0
                             for j = 1, getOptions:size() - 1 do
                                 if(tostring(getOptions:get(j):getFeature():getName()) == mxy[i - 2]) then
+                                    p = p + 1
                                     table.insert(options, getOptions:get(j))
                                 end
+                            end
+                            if(p == 0) then
+                                unnamed = mxy[i - 2]
+                                table.insert(options, "")
                             end
                         end
                     end
