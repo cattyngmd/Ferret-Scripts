@@ -1,4 +1,4 @@
---gui
+--gui (govnokod)
 --author: amfero
 
 function main()
@@ -26,6 +26,8 @@ function main()
         local options = {}
         local typing = false
         local typingOption
+        local binding = false
+        local bindingModule
         local text = ""
 
         gui:setRender(function(matrix, point)
@@ -147,7 +149,10 @@ function main()
 
             for i = 1, #options do
 
+                local modules = client:getModuleManager()
                 local index = find(options[i]:getFeature():getName())
+
+                local bindString
 
                 if(typing and options[i] == typingOption) then
                     string = options[i]:getName() .. ": " .. text .. "..."
@@ -155,8 +160,19 @@ function main()
                     string = options[i]:getName() .. ": " .. tostring(options[i]:getValue())
                 end
 
+                if(binding) then
+                    bindString = "Key: " .. modules:get(mxy[index]):getKey() .. "..."
+                else
+                    bindString = "Key: " .. modules:get(mxy[index]):getKey() 
+                end 
+
                 renderer:rectFilled(matrix, vec2d(mxy[index + 1] + 45 - 2, mxy[index + 2] + i * 12 - 8), vec2d(mxy[index + 1] + renderer:width(string) + 48, mxy[index + 2] + i * 12 + 4), color(10, 10, 10, 255))
                 renderer:textWithShadow(matrix, string, vec2d(mxy[index + 1] + 45, mxy[index + 2] + i * 12 - 6), color(255, 255, 255, 255))
+                
+                if(options[i + 1] == nil) then
+                    renderer:rectFilled(matrix, vec2d(mxy[index + 1] + 45 - 2, mxy[index + 2] + i * 12 + 4), vec2d(mxy[index + 1] + renderer:width(bindString) + 48, mxy[index + 2] + i * 12 + 4 + 12), color(10, 10, 10, 255))
+                    renderer:textWithShadow(matrix, bindString, vec2d(mxy[index + 1] + 45, mxy[index + 2] + (i + 1) * 12 - 6), color(255, 255, 255, 255))
+                end
 
                 table.insert(oxy, options[i])
                 table.insert(oxy, mxy[index + 1] + 45)
@@ -177,6 +193,7 @@ function main()
             if(handleType(button, false) == "lcm") then
 
                 typing = false
+                binding = false
 
                 for i = 1, #mxy do
                     if(i % 3 == 0 and options[1] == nil) then
@@ -204,6 +221,13 @@ function main()
                             end
                         end
                     end
+
+                    if(oxy[i + 1] == nil) then
+                        if(pointY > oxy[i] + 11 and pointY < oxy[i] + 24 and pointX > oxy[i - 1] - 2 and pointX < oxy[i - 1] + 44) then
+                            binding = true
+                            bindingModule = oxy[i - 2]:getFeature()
+                        end
+                    end
                 end
 
             end
@@ -211,7 +235,8 @@ function main()
             if(handleType(button, false) == "rcm") then
 
                 options = {}
-                if(typing == true) then typing = false end
+                if(typing) then typing = false end
+                if(binding) then binding = false end
 
                 for i = 1, #mxy do
                     if(i % 3 == 0) then
@@ -255,6 +280,12 @@ function main()
 
         function handleType(key, iskeyboard)
 
+            if key == 256 and iskeyboard then
+                module:setToggled(false)
+                binding = false
+                typing = false
+            end
+
             if key == 263 and iskeyboard then
                 x = x - 10
             end
@@ -271,17 +302,17 @@ function main()
                 y = y - 10
             end
 
-            if key == 254 and iskeyboard then
+            if key == 254 and iskeyboard and typing then
                 typing = not typing
                 options = {}
             end
 
-            if key == 257 and iskeyboard then
+            if key == 257 and iskeyboard and typing then
                 typingOption:setStringValue(text)
                 typing = not typing
             end
 
-            if key == 259 and iskeyboard then
+            if key == 259 and iskeyboard and typing then
                 text = text:sub(1, -2)
             end
 
@@ -291,6 +322,11 @@ function main()
 
             if key == 1 and not iskeyboard then
                 return "rcm"
+            end
+
+            if(binding and bindingModule ~= nil) then
+                bindingModule:setKey(key)
+                binding = false
             end
 
         end
@@ -309,7 +345,6 @@ function main()
 
         module:onEnable(function()
             mc:setScreen(guib)
-            module:setToggled(false)
         end)
 
     end)
