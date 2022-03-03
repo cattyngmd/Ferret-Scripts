@@ -6,7 +6,7 @@ local LocalDateTime = luajava.bindClass("java.time.LocalDateTime")
 
 function main()
     local arraylist = Module.new("arraylist", "j", "VISUAL", this)
-    arraylist:body(function(event)
+    arraylistbody(function(mod)
         if(event:getName() == "render_2d") then
             local text = "Ferret [xhzcord] | "..LocalDateTime:now():format(DateFormatter:ofPattern("HH:mm:ss"))
             renderer:rectFilled(event:getStack(),vec2d(2, 1), vec2d(renderer:width(text)+4, 11), color(255, 255, 255, 150))
