@@ -5,9 +5,13 @@ function main()
 
     local module = Module.new("GUI", "", "CLIENT", this)
 
-    module:body(function(mod) 
+    local x = 100
+    local y = 100
 
-        local gui = GuiBuilder.new("Gui")
+    local tick = 0
+    local xx = 0
+
+    module:body(function(mod)
 
         local categories = 
         {
@@ -19,184 +23,169 @@ function main()
             "CLIENT"
         }
 
-        local mxy
-        local oxy
-        local x = 5
-        local y = 30
+        local bool = false
+        local categoriesX = {}
+        local categoriesX2 = {}
+        local thisCategory = 1
         local options = {}
         local typing = false
         local typingOption
-        local binding = false
-        local bindingModule
         local text = ""
-        local unnamed
+        local binding
+        local sliderOption
+
+        local gui = GuiBuilder.new("Gui")
 
         gui:setRender(function(matrix, point)
 
+            local ms = 0
             mxy = {}
             oxy = {}
-            local t1 = 0
-            local t2 = 0
-            local t3 = 0
-            local t4 = 0
-            local t5 = 0
-            local t6 = 0
 
-            renderer:rectFilled(matrix, vec2d(0, 0), vec2d(mc:getWindow():getScaledWidth(), mc:getWindow():getScaledHeight()), color(0, 0, 0, 150))
+            local w = mc:getWindow():getScaledWidth()
+            local h = mc:getWindow():getScaledHeight()
+
+            renderer:rectFilled(matrix, vec2d(w - 53 - xx, h - 47), vec2d(w - 47, h - 73), color(0, 0, 0, 50))
+            renderer:rectFilled(matrix, vec2d(w - 51 - xx, h - 49), vec2d(w - 49, h - 71), color(255, 255, 255, 255))
+            renderer:rectFilled(matrix, vec2d(w - 50 - xx, h - 50), vec2d(w - 50, h - 70), color(20, 20, 20, 255))
+
+            tick = tick + 1
+
+            if(tick <= 1 and xx <= renderer:width("maidanhack b_2013") + 8) then
+                xx = xx + 2
+                tick = 0
+            end
+
+
+            if(xx >= renderer:width("maidanhack b_2013") + 8) then
+                renderer:text(matrix, "maidanhack b_2013", vec2d(w - 45 - xx, h - 63), color(255, 255, 255, 255))
+            end
+
+            renderer:rectFilled(matrix, vec2d(x - 3, y - 3), vec2d(x + 500 + 3, y + 250 + 3), color(0, 0, 0, 50))
+            renderer:rectFilled(matrix, vec2d(x - 1, y - 1), vec2d(x + 500 + 1, y + 250 + 1), color(255, 255, 255, 255))
+            renderer:rectFilled(matrix, vec2d(x, y), vec2d(x + 500, y + 250), color(20, 20, 20, 255))
+
+            renderer:rectFilled(matrix, vec2d(x + 40, y + 30), vec2d(x + 500 - 40, y + 31), color(255, 255, 255, 255))
+
+            renderer:rectFilled(matrix, vec2d(x + 255, y + 30 + 8), vec2d(x + 500 - 40, y + 30 + 9), color(255, 255, 255, 15))
+            renderer:rectFilled(matrix, vec2d(x + 255, y + 30 + 9), vec2d(x + 255 + 1, y + 250 - 20), color(255, 255, 255, 15))
+
+            renderer:rectFilled(matrix, vec2d(x + 40, y + 30 + 8), vec2d(x + 245, y + 30 + 9), color(255, 255, 255, 15))
+            renderer:rectFilled(matrix, vec2d(x + 245 - 1, y + 30 + 9), vec2d(x + 245, y + 250 - 20), color(255, 255, 255, 15))
+
+            renderer:text(matrix, "maidanhack b_2013", vec2d(x + 3, y + 250 - 11), color(255, 255, 255, 255))
 
             for i = 1, #categories do
 
-                renderer:rectFilled(matrix, vec2d(x + i * 120 - 2, y - 1), vec2d(x + i * 120 + 100 + 4, y + 11), color(10, 10, 10, 200))
-                renderer:rectFilled(matrix, vec2d(x + i * 120 - 2, y + 11), vec2d(x + i * 120 + 100 + 4, y + 14), color(50, 50, 50, 100))
-                renderer:textWithShadow(matrix, tostring(categories[i]), vec2d(x + i * 120, y + 1), color(255, 255, 255, 255))
+                local n = x + 18 + 66 * i - renderer:width(tostring(categories[i])) / 2
 
-            end
+                renderer:text(matrix, tostring(categories[i]), vec2d(n, y + 15), color(255, 255, 255, 255))
 
-            local modules = client:getModuleManager()
-
-            for i = 0, modules:size() - 1 do
-
-                local module = modules:get(i)
-                local moduleName = module:getName()
-                local moduleCategory = tostring(module:getCategory())
-
-                local rgb
-
-                if(module:isToggled()) then
-                    rgb = {55, 255, 55}
+                if(point:x() > n - 4 and point:x() < n + renderer:width(tostring(categories[i])) + 2 and point:y() > y + 14 and point:y() < y + 26) then
+                    renderer:rectFilled(matrix, vec2d(n - 2, y + 24), vec2d(n + renderer:width(tostring(categories[i])) + 2, y + 26), color(255, 255, 255, 255))
                 else
-                    rgb = {200, 200, 200}
+                    renderer:rectFilled(matrix, vec2d(n - 2, y + 24), vec2d(n + renderer:width(tostring(categories[i])) + 2, y + 26), color(255, 255, 255, 100))
                 end
 
-                if(moduleCategory == categories[1]) then
+                modules = client:getModuleManager()
 
-                    t1 = t1 + 1
+                if(thisCategory == i) then
 
-                    renderer:rectFilled(matrix, vec2d(x + 1 * 120 - 2, y + 4 + 12 * t1 - 2), vec2d(x + 1 * 120 + 100 + 4,  y + 4 + 12 * t1 + 10), color(10, 10, 10, 200))
-                    renderer:textWithShadow(matrix, moduleName, vec2d(x + 1 * 120, y + 4 + 12 * t1), color(rgb[1], rgb[2], rgb[3], 255))
+                    renderer:rectFilled(matrix, vec2d(n - 2, y + 24), vec2d(n + renderer:width(tostring(categories[i])) + 2, y + 26), color(100, 255, 100, 255))
 
-                    table.insert(mxy, moduleName)
-                    table.insert(mxy, x + 1 * 120)
-                    table.insert(mxy, y + 4 + 12 * t1)
+                    for j = 0, modules:size() - 1 do
 
-                end
+                        local module = modules:get(j)
+                        local moduleName = module:getName()
+                        local moduleCategory = tostring(module:getCategory())
 
-                if(moduleCategory == categories[2]) then
+                        if(moduleCategory == categories[i]) then
 
-                    t2 = t2 + 1
+                            ms = ms + 1
+                            renderer:text(matrix, moduleName, vec2d(x + 45, y + 30 + 14 * ms), color(255, 255, 255, 255))
 
-                    renderer:rectFilled(matrix, vec2d(x + 2 * 120 - 2, y + 4 + 12 * t2 - 2), vec2d(x + 2 * 120 + 100 + 4,  y + 4 + 12 * t2 + 10), color(10, 10, 10, 200))
-                    renderer:textWithShadow(matrix, moduleName, vec2d(x + 2 * 120, y + 4 + 12 * t2), color(rgb[1], rgb[2], rgb[3], 255))
+                            if(point:x() > x + 45 and point:x() < x + 45 + renderer:width(moduleName) and point:y() > y + 30 + 14 * ms and point:y() < y + 30 + 14 * ms + 10) then
+                                renderer:rectFilled(matrix, vec2d(x + 45 - 1, y + 30 + 14 * ms + 9), vec2d(x + 45 + renderer:width(moduleName) + 1, y + 30 + 14 * ms + 10), color(255, 255, 255, 255))
+                            else
+                                renderer:rectFilled(matrix, vec2d(x + 45 - 1, y + 30 + 14 * ms + 9), vec2d(x + 45 + renderer:width(moduleName) + 1, y + 30 + 14 * ms + 10), color(255, 255, 255, 100))
+                            end
 
-                    table.insert(mxy, moduleName)
-                    table.insert(mxy, x + 2 * 120)
-                    table.insert(mxy, y + 4 + 12 * t2)
+                            if(module:isToggled()) then 
+                                renderer:rectFilled(matrix, vec2d(x + 45 - 1, y + 30 + 14 * ms + 9), vec2d(x + 45 + renderer:width(moduleName) + 1, y + 30 + 14 * ms + 10), color(100, 255, 100, 255))
+                            end
 
-                end
+                            table.insert(mxy, module)
+                            table.insert(mxy, x + 45 + renderer:width(moduleName) + 1)
+                            table.insert(mxy, y + 30 + 14 * ms)
 
-                if(moduleCategory == categories[3]) then
+                        end
 
-                    t3 = t3 + 1
-
-                    renderer:rectFilled(matrix, vec2d(x + 3 * 120 - 2, y + 4 + 12 * t3 - 2), vec2d(x + 3 * 120 + 100 + 4,  y + 4 + 12 * t3 + 10), color(10, 10, 10, 200))
-                    renderer:textWithShadow(matrix, moduleName, vec2d(x + 3 * 120, y + 4 + 12 * t3), color(rgb[1], rgb[2], rgb[3], 255))
-
-                    table.insert(mxy, moduleName)
-                    table.insert(mxy, x + 3 * 120)
-                    table.insert(mxy, y + 4 + 12 * t3)
-
-                end
-
-                if(moduleCategory == categories[4]) then
-
-                    t4 = t4 + 1
-
-                    renderer:rectFilled(matrix, vec2d(x + 4 * 120 - 2, y + 4 + 12 * t4 - 2), vec2d(x + 4 * 120 + 100 + 4,  y + 4 + 12 * t4 + 10), color(10, 10, 10, 200))
-                    renderer:textWithShadow(matrix, moduleName, vec2d(x + 4 * 120, y + 4 + 12 * t4), color(rgb[1], rgb[2], rgb[3], 255))
-
-                    table.insert(mxy, moduleName)
-                    table.insert(mxy, x + 4 * 120)
-                    table.insert(mxy, y + 4 + 12 * t4)
+                    end
 
                 end
 
-                if(moduleCategory == categories[5]) then
-
-                    t5 = t5 + 1
-
-                    renderer:rectFilled(matrix, vec2d(x + 5 * 120 - 2, y + 4 + 12 * t5 - 2), vec2d(x + 5 * 120 + 100 + 4,  y + 4 + 12 * t5 + 10), color(10, 10, 10, 200))
-                    renderer:textWithShadow(matrix, moduleName, vec2d(x + 5 * 120, y + 4 + 12 * t5), color(rgb[1], rgb[2], rgb[3], 255))
-
-                    table.insert(mxy, moduleName)
-                    table.insert(mxy, x + 5 * 120)
-                    table.insert(mxy, y + 4 + 12 * t5)
-
-                end
-
-                if(moduleCategory == categories[6]) then
-
-                    t6 = t6 + 1
-
-                    renderer:rectFilled(matrix, vec2d(x + 6 * 120 - 2, y + 4 + 12 * t6 - 2), vec2d(x + 6 * 120 + 100 + 4,  y + 4 + 12 * t6 + 10), color(10, 10, 10, 200))
-                    renderer:textWithShadow(matrix, moduleName, vec2d(x + 6 * 120, y + 4 + 12 * t6), color(rgb[1], rgb[2], rgb[3], 255))
-
-                    table.insert(mxy, moduleName)
-                    table.insert(mxy, x + 6 * 120)
-                    table.insert(mxy, y + 4 + 12 * t6)
-
-                end
+                table.insert(categoriesX, n - 4)
+                table.insert(categoriesX2, n + renderer:width(tostring(categories[i])) + 2)
 
             end
 
             for i = 1, #options do
 
-                local modules = client:getModuleManager()
-                local bindString
+                if(options[2] == "") then
 
-                if(options[1] == "") then
-                    local index = find(unnamed)
-                    
+                    renderer:text(matrix, options[1]:getName(), vec2d(x + 255 + 5, y + 30 + 14), color(255, 255, 255, 255))
+
+                    local bindString
+
                     if(binding) then
-                        bindString = "Key: " .. modules:get(mxy[index]):getKey() .. "..."
+                        bindString = "Key: " .. options[1]:getKey() .. "..."
+                        bindingModule = options[1]
                     else
-                        bindString = "Key: " .. modules:get(mxy[index]):getKey() 
-                    end 
-                    
-                    renderer:rectFilled(matrix, vec2d(mxy[index + 1] + 45 - 2, mxy[index + 2] + i * 12 - 8), vec2d(mxy[index + 1] + renderer:width(bindString) + 48, mxy[index + 2] + i * 12 + 4), color(10, 10, 10, 255))
-                    renderer:textWithShadow(matrix, bindString, vec2d(mxy[index + 1] + 45, mxy[index + 2] + i * 12 - 6), color(255, 255, 255, 255))
+                        bindString = "Key: " .. options[1]:getKey()
+                    end
 
-                    table.insert(oxy, "")
-                    table.insert(oxy, modules:get(mxy[index]))
-                    table.insert(oxy, mxy[index + 1] + 45)
-                    table.insert(oxy, mxy[index + 2] + i * 12 - 6)
+                    renderer:text(matrix, bindString, vec2d(x + 255 + 5, y + 250 - 30), color(255, 255, 255, 255))
+
                 else
-                    local index = find(options[i]:getFeature():getName())
 
                     if(typing and options[i] == typingOption) then
                         string = options[i]:getName() .. ": " .. text .. "..."
                     else
                         string = options[i]:getName() .. ": " .. tostring(options[i]:getValue())
                     end
-
-                    if(binding) then
-                        bindString = "Key: " .. modules:get(mxy[index]):getKey() .. "..."
-                    else
-                        bindString = "Key: " .. modules:get(mxy[index]):getKey() 
-                    end 
-
-                    renderer:rectFilled(matrix, vec2d(mxy[index + 1] + 45 - 2, mxy[index + 2] + i * 12 - 8), vec2d(mxy[index + 1] + renderer:width(string) + 48, mxy[index + 2] + i * 12 + 4), color(10, 10, 10, 255))
-                    renderer:textWithShadow(matrix, string, vec2d(mxy[index + 1] + 45, mxy[index + 2] + i * 12 - 6), color(255, 255, 255, 255))
-                    
-                    if(options[i + 1] == nil) then
-                        renderer:rectFilled(matrix, vec2d(mxy[index + 1] + 45 - 2, mxy[index + 2] + i * 12 + 4), vec2d(mxy[index + 1] + renderer:width(bindString) + 48, mxy[index + 2] + i * 12 + 4 + 12), color(10, 10, 10, 255))
-                        renderer:textWithShadow(matrix, bindString, vec2d(mxy[index + 1] + 45, mxy[index + 2] + (i + 1) * 12 - 6), color(255, 255, 255, 255))
+    
+                    --todo: slider
+                    if((i == 1 and options[i]:is("number")) or (i % 3 == 0 and options[i]:is("number"))) then
+                        --local ind = 100 / (options[i]:getMax() - options[i]:getMin()) 
                     end
 
+                    renderer:text(matrix, options[i]:getFeature():getName(), vec2d(x + 255 + 5, y + 30 + 14), color(255, 255, 255, 255))
+                    renderer:text(matrix, string, vec2d(x + 255 + 5, y + 30 + 14 + 14 * i), color(255, 255, 255, 255))
+
+                    local bindString
+
+                    if(binding) then
+                        bindString = "Key: " .. modules:get(options[1]:getFeature():getName()):getKey() .. "..."
+                        bindingModule = modules:get(options[1]:getFeature():getName())
+                    else
+                        bindString = "Key: " .. modules:get(options[1]:getFeature():getName()):getKey()
+                    end
+    
+                    renderer:text(matrix, bindString, vec2d(x + 255 + 5, y + 250 - 30), color(255, 255, 255, 255))
+    
                     table.insert(oxy, options[i])
-                    table.insert(oxy, mxy[index + 1] + 45)
-                    table.insert(oxy, mxy[index + 2] + i * 12 - 6)
+                    table.insert(oxy, x + 255 + 5 + renderer:width(string) + 1)
+                    table.insert(oxy, y + 30 + 14 + 14 * i)
+
                 end
 
+            end
+
+            if(bool) then
+                x = point:x() - 250
+                y = point:y() - 5
+                categoriesX = {}
+                categoriesX2 = {}
             end
 
         end)
@@ -206,7 +195,6 @@ function main()
             local pointX = math.ceil(tonumber(point:x()))
             local pointY = math.ceil(tonumber(point:y()))
 
-            local modules = client:getModuleManager()
             local getOptions = client:getOptions()
 
             if(handleType(button, false) == "lcm") then
@@ -214,25 +202,23 @@ function main()
                 typing = false
                 binding = false
 
+                if(options[1] ~= nil) then
+                    if(pointX > x + 255 + 5 - 1 and pointX < x + 255 + 5 + 40 and pointY > y + 250 - 30 and pointY < y + 250 - 20) then
+                        binding = true
+                    end
+                end
+
                 for i = 1, #mxy do
-                    if(i % 3 == 0 and options[1] == nil) then
-                        if(pointY > mxy[i] - 1 and pointY < mxy[i] + 12 and pointX > mxy[i - 1] - 2 and pointX < mxy[i - 1] + 104) then
-                            modules:get(mxy[i - 2]):toggle()
+                    if(i % 3 == 0) then
+                        if(pointX > x + 45 - 1 and pointX < mxy[i - 1] and pointY > mxy[i] and pointY < mxy[i] + 10) then
+                            mxy[i - 2]:toggle()
                         end
                     end
                 end
 
                 for i = 1, #oxy do
-                    if(oxy[1] == "") then
-                        if(pointY > oxy[4] - 1 and pointY < oxy[4] + 12 and pointX > oxy[3] - 2 and pointX < oxy[3] + 44) then
-                            binding = true
-                            bindingModule = oxy[2]
-                        end
-                        return
-                    end
-
                     if(i % 3 == 0) then
-                        if(pointY > oxy[i] - 1 and pointY < oxy[i] + 12 and pointX > oxy[i - 1] - 2 and pointX < oxy[i - 1] + renderer:width(oxy[i - 2]:getName()) + 34) then
+                        if(pointX > x + 255 + 5 - 1 and pointX < oxy[i - 1] and pointY > oxy[i] and pointY < oxy[i] + 10) then
                             local option = oxy[i - 2]
                             if(option:is("bool")) then
                                 option:setValue(not option:getValue())
@@ -248,13 +234,6 @@ function main()
                             end
                         end
                     end
-
-                    if(oxy[i + 1] == nil) then
-                        if(pointY > oxy[i] + 11 and pointY < oxy[i] + 24 and pointX > oxy[i - 1] - 2 and pointX < oxy[i - 1] + 44) then
-                            binding = true
-                            bindingModule = oxy[i - 2]:getFeature()
-                        end
-                    end
                 end
 
             end
@@ -262,21 +241,21 @@ function main()
             if(handleType(button, false) == "rcm") then
 
                 options = {}
-                if(typing) then typing = false end
-                if(binding) then binding = false end
+                typing = false
+                binding = false
 
                 for i = 1, #mxy do
                     if(i % 3 == 0) then
-                        if(pointY > mxy[i] - 1 and pointY < mxy[i] + 11 and pointX > mxy[i - 1] - 2 and pointX < mxy[i - 1] + 104) then
-                            local p = 0
+                        if(pointX > x + 45 - 1 and pointX < mxy[i - 1] and pointY > mxy[i] and pointY < mxy[i] + 10) then
+                            p = 0
                             for j = 1, getOptions:size() - 1 do
-                                if(tostring(getOptions:get(j):getFeature():getName()) == mxy[i - 2]) then
+                                if(tostring(getOptions:get(j):getFeature():getName()) == mxy[i - 2]:getName()) then
                                     p = p + 1
                                     table.insert(options, getOptions:get(j))
                                 end
                             end
                             if(p == 0) then
-                                unnamed = mxy[i - 2]
+                                table.insert(options, mxy[i - 2])
                                 table.insert(options, "")
                             end
                         end
@@ -285,22 +264,53 @@ function main()
 
             end
 
-        end)
+            if(pointX > x and pointX < x + 500 and pointY > y and pointY < y + 12) then
+                bool = true
+            end
 
-        gui:setMouseScrolled(function (point, amount)
+            if(pointX > categoriesX[1] and pointX < categoriesX2[1] and pointY > y + 14 and pointY < y + 26) then
+                thisCategory = 1
+                options = {}
+            end
 
-            if(amount == 1) then
-                y = y - 10
-            else
-                y = y + 10
+            if(pointX > categoriesX[2] and pointX < categoriesX2[2] and pointY > y + 14 and pointY < y + 26) then
+                thisCategory = 2
+                options = {}
+            end
+
+            if(pointX > categoriesX[3] and pointX < categoriesX2[3] and pointY > y + 14 and pointY < y + 26) then
+                thisCategory = 3
+                options = {}
+            end
+
+            if(pointX > categoriesX[4] and pointX < categoriesX2[4] and pointY > y + 14 and pointY < y + 26) then
+                thisCategory = 4
+                options = {}
+            end
+
+            if(pointX > categoriesX[5] and pointX < categoriesX2[5] and pointY > y + 14 and pointY < y + 26) then
+                thisCategory = 5
+                options = {}
+            end
+
+            if(pointX > categoriesX[6] and pointX < categoriesX2[6] and pointY > y + 14 and pointY < y + 26) then
+                thisCategory = 6
+                options = {}
             end
 
         end)
 
+        gui:setMouseReleased(function(point, button)
+
+            local pointX = math.ceil(tonumber(point:x()))
+            local pointY = math.ceil(tonumber(point:y()))
+
+            bool = false
+
+        end)
+
         gui:setKeyPressed(function(key, scan, modifiers)
-
             handleType(key, true)
-
         end)
 
         gui:setCharTyped(function (char, modi)
@@ -313,32 +323,12 @@ function main()
 
         function handleType(key, iskeyboard)
 
-            if key == 256 and iskeyboard then
-                binding = false
-                typing = false
-                options = {}
-                module:setToggled(false)
+            if key == 0 and not iskeyboard then
+                return "lcm"
             end
 
-            if key == 263 and iskeyboard then
-                x = x - 10
-            end
-
-            if key == 262 and iskeyboard then
-                x = x + 10
-            end
-
-            if key == 264 and iskeyboard then
-                y = y + 10
-            end
-
-            if key == 265 and iskeyboard then
-                y = y - 10
-            end
-
-            if key == 254 and iskeyboard and typing then
-                typing = not typing
-                options = {}
+            if key == 1 and not iskeyboard then
+                return "rcm"
             end
 
             if key == 257 and iskeyboard and typing then
@@ -346,16 +336,14 @@ function main()
                 typing = not typing
             end
 
+            if(key == 256 and iskeyboard) then
+                typing = false
+                binding = false
+                module:setToggled(false)
+            end
+
             if key == 259 and iskeyboard and typing then
                 text = text:sub(1, -2)
-            end
-
-            if key == 0 and not iskeyboard then
-                return "lcm"
-            end
-
-            if key == 1 and not iskeyboard then
-                return "rcm"
             end
 
             if(binding and bindingModule ~= nil) then
@@ -365,20 +353,12 @@ function main()
 
         end
 
-        function find(arg)
+        local guibuild = gui:build()
 
-            for i = 1, #mxy do
-                if(mxy[i] == arg) then
-                    return i
-                end
-            end
-
-        end
-
-        local guib = gui:build()
-
-        module:onEnable(function()
-            mc:setScreen(guib)
+        module:onEnable(function(mod)
+            xx = 0
+            tick = 0
+            mc:setScreen(guibuild)
         end)
 
     end)
