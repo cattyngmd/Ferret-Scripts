@@ -24,21 +24,21 @@ function main()
 
             isLoaded()
 
-            for i = 2, #luas do
+            for i = 1, #luas do
                 if(isLoaded(luas[i])) then
-                    renderer:text(matrix, luas[i], vec2d(x + 3, y + 12 * i), color(255, 255, 255, 255))
-                    renderer:text(matrix, "unload,", vec2d(x + 3 + renderer:width(luas[i]) + 5, y + 12 * i), color(100, 255, 100, 255))
-                    renderer:text(matrix, "reload", vec2d(x + 3 + renderer:width(luas[i] .. "unload") + 10 , y + 12 * i), color(255, 255, 100, 255))
+                    renderer:text(matrix, luas[i], vec2d(x + 3, y + 12 * i + 10), color(255, 255, 255, 255))
+                    renderer:text(matrix, "unload,", vec2d(x + 3 + renderer:width(luas[i]) + 5, y + 12 * i + 10), color(100, 255, 100, 255))
+                    renderer:text(matrix, "reload", vec2d(x + 3 + renderer:width(luas[i] .. "unload") + 10 , y + 12 * i + 10), color(255, 255, 100, 255))
                     data[i] = {
                         px = x + 3 + renderer:width(luas[i]),
-                        py = y + 12 * i
+                        py = y + 12 * i + 10
                     }
                 else
-                    renderer:text(matrix, luas[i], vec2d(x + 3, y + 12 * i), color(255, 255, 255, 255))
-                    renderer:text(matrix, "load", vec2d(x + 3 + renderer:width(luas[i]) + 5, y + 12 * i), color(255, 100, 100, 255))
+                    renderer:text(matrix, luas[i], vec2d(x + 3, y + 12 * i + 10), color(255, 255, 255, 255))
+                    renderer:text(matrix, "load", vec2d(x + 3 + renderer:width(luas[i]) + 5, y + 12 * i + 10), color(255, 100, 100, 255))
                     data[i] = {
                         px = x + 3 + renderer:width(luas[i]),
-                        py = y + 12 * i
+                        py = y + 12 * i + 10
                     }
                 end
             end
@@ -50,7 +50,7 @@ function main()
             local pX = math.ceil(tonumber(point:x()))
             local pY = math.ceil(tonumber(point:y()))
 
-            for i = 2, #luas do
+            for i = 1, #luas do
                 if(pX > x + 3 and pX < data[i].px and pY > data[i].py and pY < data[i].py + 10) then
                     print(luas[i])
                 end
