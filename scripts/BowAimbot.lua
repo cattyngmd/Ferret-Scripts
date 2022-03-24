@@ -7,6 +7,10 @@ function main()
         local range = NumberBuilder(20):name("Range"):setBounds(0, 100):build(module)
         local auto = BooleanBuilder(false):name("Auto"):build(module)
 
+        module:onDisable(function()
+            mc.options.keyUse:setPressed(false)
+        end)
+
         module:registerCallback("events", function(event)
 
             if(event:getName() == "render_3d_pre") then
@@ -29,6 +33,7 @@ function main()
                 if(target == nil) then return end
 
                 if(auto:getValue()) then
+                    print(speed)
                     aim(event:getDelta(), target)
                     if(mc.player:getItemUseTime() >= 20) then
                         mc.options.keyUse:setPressed(false)
@@ -49,7 +54,7 @@ function main()
 
     function aim(tickDelta, target)
 
-        local velocity = (mc.player:getItemUseTime() - mc.player:getItemUseTimeLeft()) / 20
+        local velocity = mc.player:getItemUseTime() / 20
         velocity = (velocity * velocity + velocity * 2) / 3
         if(velocity > 1) then velocity = 1 end
 
