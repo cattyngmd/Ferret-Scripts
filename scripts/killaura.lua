@@ -27,12 +27,10 @@ function main()
 
                     local entity = entities:get(i)
 
-                    print(entity)
-
                     if(#entity:getEntityName() < 32 and entity:getEntityName() ~= globals:getUsername() and mc.player:distanceTo(entity) < range:getValue()) then
 
                         if(rotate:getValue()) then
-                            rotations:setYaw(rotations:calcRotations(entity)[1]) 
+                            rotations:set(rotations:calcRotations(entity)[1], rotations:calcRotations(entity)[2]) 
                         end
 
                         if(del >= delay:getValue()) then
