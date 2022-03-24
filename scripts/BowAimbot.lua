@@ -33,7 +33,6 @@ function main()
                 if(target == nil) then return end
 
                 if(auto:getValue()) then
-                    print(speed)
                     aim(event:getDelta(), target)
                     if(mc.player:getItemUseTime() >= 20) then
                         mc.options.keyUse:setPressed(false)
