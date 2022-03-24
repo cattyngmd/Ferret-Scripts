@@ -30,7 +30,10 @@ function main()
 
                 target = ents[1]
 
-                if(target == nil) then return end
+                if(target == nil or not itemInHand()) then 
+                    mc.options.keyUse:setPressed(false)
+                    return 
+                end
 
                 if(auto:getValue()) then
                     aim(event:getDelta(), target)
