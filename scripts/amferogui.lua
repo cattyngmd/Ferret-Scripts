@@ -12,6 +12,7 @@ function main()
     local currentModule = nil
     local currentSetting = nil
     local bindingModule = nil
+    local sliderSetting = nil
     local settings = {}
     local text = ""
     local bool = false
@@ -51,6 +52,7 @@ function main()
 
                     currentSetting = nil
                     bindingModule = nil
+                    sliderSetting = nil
 
                     if(point:x() > textX - 2 and point:x() < textX2 + 2 and point:y() > y + 20 - 2 and point:y() < y + 30 + 2) then
                         currentCategory = categories[i]
@@ -65,6 +67,7 @@ function main()
                     currentModule = nil
                     currentSetting = nil
                     bindingModule = nil
+                    sliderSetting = nil
                     settings = {}
 
                 end
@@ -142,7 +145,32 @@ function main()
                 if(settings[i] == currentSetting) then
                     renderer:text(matrix, settings[i]:getName() .. ": " .. text .. "..", vec2d(x + w - 30 - renderer:width(settings[i]:getName() .. ": " .. text .. ".."), y + 60 + 12 * i), color(255, 255, 255, 255))
                 else
-                    renderer:text(matrix, settings[i]:getName() .. ": " .. tostring(settings[i]:getValue()), vec2d(x + w - 30 - renderer:width(settings[i]:getName() .. ": " .. tostring(settings[i]:getValue())), y + 60 + 12 * i), color(255, 255, 255, 255))
+                    if(settings[i]:is("number")) then
+                        local formatted = string.format("%.2f", settings[i]:getValue())
+                        renderer:text(matrix, settings[i]:getName() .. ": " .. formatted, vec2d(x + w - 30 - renderer:width(settings[i]:getName() .. ": " .. formatted), y + 60 + 12 * i), color(255, 255, 255, 255))
+                    else
+                        renderer:text(matrix, settings[i]:getName() .. ": " .. tostring(settings[i]:getValue()), vec2d(x + w - 30 - renderer:width(settings[i]:getName() .. ": " .. tostring(settings[i]:getValue())), y + 60 + 12 * i), color(255, 255, 255, 255))
+                    end
+                end
+
+                if(settings[i]:is("number")) then
+                    local formattedNig = string.format("%.2f", settings[i]:getValue())
+                    local ind = 100 / (settings[i]:getMax() - settings[i]:getMin())
+                    local startSl = x + w - 30 - renderer:width(settings[i]:getName() .. ": " .. formattedNig) - 110
+                    local endSl = x + w - 30 - renderer:width(settings[i]:getName() .. ": " .. formattedNig) - 10
+                    renderer:rectFilled(matrix, vec2d(startSl, y + 60 + 12 * i + 3), vec2d(endSl, y + 60 + 12 * i + 5), color(255, 255, 255, 155))
+                    local currentInd = startSl + ind * settings[i]:getValue()
+                    renderer:rectFilled(matrix, vec2d(currentInd - 2, y + 60 + 12 * i + 2), vec2d(currentInd + 2, y + 60 + 12 * i + 6), color(155, 255, 155, 255))
+                    if(sliderSetting == settings[i]) then
+                        local pointInd = (point:x() - startSl) / ind
+                        local formatted = string.format("%.2f", pointInd)
+                        settings[i]:setStringValue(tonumber(formatted))
+                    end
+                    if(point:x() > startSl and point:x() < endSl and point:y() > y + 60 + 12 * i + 2 and point:y() < y + 60 + 12 * i + 6) then
+                        if(action == "lcm") then
+                            sliderSetting = settings[i]
+                        end
+                    end
                 end
 
                 if(point:x() > x + w - 30 - renderer:width(settings[i]:getName() .. ": " .. tostring(settings[i]:getValue())) - 2 and point:x() < x + w - 30 + 2 and point:y() > y + 60 + 12 * i - 2 and point:y() < y + 60 + 12 * i + 10 + 2) then
@@ -176,6 +204,7 @@ function main()
 
         gui:setMouseReleased(function(point, button)
             bool = false
+            sliderSetting = nil
         end)
 
         gui:setMouseClicked(function(point, button)
@@ -216,6 +245,8 @@ function main()
             mc:setScreen(guibuild)
             module:setToggled(false)
             currentSetting = nil
+            sliderSetting = nil
+            bindingModule = nil
         end)
 
     end)
